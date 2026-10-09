@@ -1,0 +1,23 @@
+# Env files (keep the example)
+.env
+.env.*
+!.env.example
+
+# SQLite database
+*.db
+*.db-shm
+*.db-wal
+
+# Build output
+bin/
+obj/
+*.user
+.vs/
+.vscode/
+.idea/
+TestResults/
+
+# e2e
+node_modules/
+test-results/
+playwright-report/

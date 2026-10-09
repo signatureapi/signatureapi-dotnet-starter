@@ -1,0 +1,59 @@
+@page
+@model IndexModel
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Send an agreement · SignatureAPI example</title>
+  <link rel="stylesheet" href="/app.css">
+</head>
+<body>
+  <main>
+    <header>
+      <h1>Send an agreement</h1>
+      <p class="hint">A SignatureAPI e-signature API example for ASP.NET Core. Test mode: no emails are sent.</p>
+    </header>
+
+    <section class="card">
+      <h2>New agreement</h2>
+      <form method="post" action="/agreements" asp-antiforgery="true">
+        <label>Signer name <input name="signer_name" value="@Model.SignerName" required autocomplete="off"></label>
+        <label>Signer email <input name="signer_email" value="@Model.SignerEmail" type="email" required autocomplete="off"></label>
+        <button type="submit">Send for signature</button>
+      </form>
+      @if (Model.Error is not null)
+      {
+        <p class="error" role="alert">Could not create the envelope: @Model.Error</p>
+      }
+    </section>
+
+    <section class="card">
+      <h2>Agreements</h2>
+      <table>
+        <thead><tr><th>Signer</th><th>Status</th><th>Sent</th><th></th></tr></thead>
+        <tbody>
+          @foreach (var agreement in Model.Agreements)
+          {
+            <tr data-agreement-id="@agreement.Id" data-envelope-id="@agreement.EnvelopeId">
+              <td class="signer"><strong>@agreement.SignerName</strong>@agreement.SignerEmail</td>
+              <td><span class="status status-@agreement.Status" data-status="@agreement.Status">@(char.ToUpperInvariant(agreement.Status[0]) + agreement.Status[1..])</span></td>
+              <td>@agreement.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
+              <td>
+                @if (agreement.Status == AgreementStatus.Completed)
+                {
+                  <a href="/agreements/@agreement.Id/signed.pdf">Signed PDF</a>
+                }
+              </td>
+            </tr>
+          }
+          @if (Model.Agreements.Count == 0)
+          {
+            <tr><td colspan="4" class="empty">No agreements yet.</td></tr>
+          }
+        </tbody>
+      </table>
+    </section>
+  </main>
+</body>
+</html>
